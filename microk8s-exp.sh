@@ -14,7 +14,7 @@ pushg_port=$(sed -n 3"p" $fhome"sett.conf" | tr -d '\r')
 job=$(sed -n 4"p" $fhome"sett.conf" | tr -d '\r')
 sec4=$(sed -n 5"p" $fhome"sett.conf" | tr -d '\r')
 max_time_wpg=$(sed -n 6"p" $fhome"sett.conf" | tr -d '\r')
-progons=$(sed -n 7"p" $fhome"sett.conf" | tr -d '\r')
+#progons=$(sed -n 7"p" $fhome"sett.conf" | tr -d '\r')
 
 logger "Init pushg_start="$pushg_start
 logger "Init pushg_ip="$pushg_ip
@@ -130,7 +130,7 @@ if [ "$pushg_start" == "1" ]; then
 fi
 
 
-kkik=0
+#kkik=0
 while true
 do
 sleep $sec4
@@ -141,14 +141,15 @@ kubectl get ns | awk '{print $1}' > $fhome"ns1.txt"
 str_col1=$(grep -c '' $fhome"ns1.txt")
 logger "str_col1="$str_col1
 if [ "$str_col1" -gt "1" ]; then
+	curl -X PUT "http://"$pushg_ip":"$pushg_port"/api/v1/admin/wipe"
 	to_ns;
 fi
 
-kkik=$(($kkik+1))
-if [ "$kkik" -ge "$progons" ]; then
-	curl -X PUT "http://"$pushg_ip":"$pushg_port"/api/v1/admin/wipe" &
-	kkik=0
-fi
+#kkik=$(($kkik+1))
+#if [ "$kkik" -ge "$progons" ]; then
+#	curl -X PUT "http://"$pushg_ip":"$pushg_port"/api/v1/admin/wipe" &
+#	kkik=0
+#fi
 
 done
 
