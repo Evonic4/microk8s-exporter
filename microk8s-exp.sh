@@ -135,7 +135,7 @@ while true
 do
 sleep $sec4
 logger " "
-logger "healthscheck ok"
+logger "healthscheck ok kkik="$kkik
 
 kubectl get ns | awk '{print $1}' > $fhome"ns1.txt"
 str_col1=$(grep -c '' $fhome"ns1.txt")
