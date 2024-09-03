@@ -14,6 +14,7 @@ pushg_port=$(sed -n 3"p" $fhome"sett.conf" | tr -d '\r')
 job=$(sed -n 4"p" $fhome"sett.conf" | tr -d '\r')
 sec4=$(sed -n 5"p" $fhome"sett.conf" | tr -d '\r')
 max_time_wpg=$(sed -n 6"p" $fhome"sett.conf" | tr -d '\r')
+progons=$(sed -n 7"p" $fhome"sett.conf" | tr -d '\r')
 
 logger "Init pushg_start="$pushg_start
 logger "Init pushg_ip="$pushg_ip
@@ -123,12 +124,13 @@ if [ "$pushg_start" == "1" ]; then
 	logger "start local pushgateway"
 	logger "pushg_port="$pushg_port
 	cp -f $fhome"0.sh" $fhome"start_pg.sh"
-	echo "su pushgateway -c '/usr/local/bin/pushgateway --web.listen-address=0.0.0.0:${pushg_port}' -s /bin/bash 1>/dev/null 2>/dev/null &" >> $fhome"start_pg.sh"
+	echo "su pushgateway -c '/usr/local/bin/pushgateway --web.listen-address=0.0.0.0:${pushg_port} --web.enable-admin-api' -s /bin/bash 1>/dev/null 2>/dev/null &" >> $fhome"start_pg.sh"
 	chmod +rx $fhome"start_pg.sh"
 	$fhome"start_pg.sh"
 fi
 
 
+kkik=0
 while true
 do
 sleep $sec4
@@ -140,6 +142,12 @@ str_col1=$(grep -c '' $fhome"ns1.txt")
 logger "str_col1="$str_col1
 if [ "$str_col1" -gt "1" ]; then
 	to_ns;
+fi
+
+kkik=$(($kkik+1))
+if [ "$kkik" -ge "$progons" ]; then
+	curl -X PUT "http://"$pushg_ip":"$pushg_port"/api/v1/admin/wipe" &
+	kkik=0
 fi
 
 done
